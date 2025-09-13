@@ -24,26 +24,37 @@ export const parseTimetableImageWithGemini = async (imageAsset) => {
 
   try {
     const { uri, base64 } = imageAsset;
+    console.log(`LOG  Processing image: ${uri}`);
+    console.log(`LOG  Image has base64: ${!!base64}`);
 
     const imageBase64 = base64 || (await fetch(uri).then(r => r.blob()).then(blob => blobToBase64(blob)));
+    console.log(`LOG  Image base64 length: ${imageBase64.length}`);
 
     const prompt = simplePrompt();
+    console.log(`LOG  Using prompt: ${prompt}`);
 
     // Retry + model fallback for transient errors (503/429)
     let text = '';
     let lastError;
+    console.log(`LOG  Starting Gemini parsing with ${GEMINI_MODELS.length} models: ${GEMINI_MODELS.join(', ')}`);
+    
     for (let m = 0; m < GEMINI_MODELS.length; m++) {
       const model = GEMINI_MODELS[m];
+      console.log(`LOG  Attempting with model ${m + 1}/${GEMINI_MODELS.length}: ${model}`);
+      
       try {
         const json = await callGeminiLatest(model, prompt, guessMimeType(uri), imageBase64);
         text = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         if (!text) throw new Error('Gemini returned empty response.');
+        console.log(`LOG  Successfully parsed with model: ${model}`);
         lastError = undefined;
         break;
       } catch (err) {
         lastError = err;
         const shouldRetry = isTransientGeminiError(err);
+        console.log(`LOG  Model ${model} failed: ${err.message} (retry: ${shouldRetry})`);
         if (!shouldRetry) break;
+        console.log('LOG  Waiting 600ms before retry...');
         await sleep(600);
       }
     }
@@ -51,6 +62,12 @@ export const parseTimetableImageWithGemini = async (imageAsset) => {
     if (!text) {
       throw lastError || new Error('Gemini parsing failed');
     }
+
+    // Log the raw Gemini text response (truncated for readability)
+    const truncatedText = text.length > 500 ? text.substring(0, 500) + '...' : text;
+    console.log('Gemini text response (truncated): ```json');
+    console.log(truncatedText);
+    console.log('```');
 
     // Try direct JSON parse; otherwise extract first JSON block
     let structured;
@@ -65,7 +82,14 @@ export const parseTimetableImageWithGemini = async (imageAsset) => {
       }
     }
 
+    // Log the structured JSON from Gemini
+    console.log('LOG  Gemini structured JSON:', JSON.stringify(structured, null, 2));
+
     const normalized = normalizeToCoursesSchema(structured);
+    
+    // Log the final normalized schema
+    console.log('LOG  Gemini normalized schema:', JSON.stringify(normalized, null, 2));
+    
     return normalized;
   } catch (error) {
     console.error('Gemini image parsing failed:', error);
@@ -91,21 +115,30 @@ const callGeminiLatest = async (model, prompt, mimeType, imageBase64) => {
   };
 
   const url = `${GEMINI_API_URL_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`;
+  
+  console.log(`LOG  Calling Gemini API with model: ${model}`);
+  console.log(`LOG  Request URL: ${url}`);
+  
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
 
+  console.log(`LOG  Gemini API response status: ${res.status}`);
+
   if (!res.ok) {
     const txt = await res.text();
+    console.error(`LOG  Gemini API error response: ${txt}`);
     const err = new Error(`Gemini request failed: ${res.status} ${txt}`);
     // @ts-ignore
     err.status = res.status;
     throw err;
   }
 
-  return res.json();
+  const responseData = await res.json();
+  console.log('LOG  Gemini API response received successfully');
+  return responseData;
 };
 
 const isTransientGeminiError = (err) => {
@@ -116,12 +149,28 @@ const isTransientGeminiError = (err) => {
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const simplePrompt = () => `Extract this timetable image and return ONLY valid JSON in the format:
+const simplePrompt = () => `You are a timetable extraction assistant. Read this timetable image carefully and return ONLY valid JSON. 
+
+Rules:
+1. Extract every class entry as an object inside \`"entries"\`.
+2. JSON format must be exactly:
 {
   "entries": [
-    { "day": "Monday", "subject": "Course Name", "time": "09:30-10:25", "location": "Room", "instructor": "Name", "type": "Lecture" }
+    {
+      "day": "Monday",
+      "subject": "Course Name (Short Code)",
+      "time": "09:30-10:25",
+      "location": "Room number or null",
+      "instructor": "Faculty Short Name or null",
+      "type": "Lecture | Lab | Project | Self Study"
+    }
   ]
-}`;
+}
+3. Use the subject short codes (like STQA, INS, BDA, CPS, CS-L, etc.) with the faculty short name in parentheses, e.g., \`"STQA(ASD)"\`.
+4. For "LIBRARY / SELF STUDY", set subject = "Library / Self Study", type = "Self Study", instructor = null, location = null.
+5. For "PROJECT", subject = "Project", type = "Project", instructor = null, location = null.
+6. For labs (e.g., CS-L, TDPT), set \`"type": "Lab"\`.
+7. Always ensure valid JSON. Do not include any explanation or text outside the JSON.`;
 
 const guessMimeType = (uri) => {
   if (!uri) return 'image/jpeg';
