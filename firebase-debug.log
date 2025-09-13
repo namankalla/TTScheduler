@@ -1,0 +1,79 @@
+[debug] [2025-09-09T19:24:26.125Z] ----------------------------------------------------------------------
+[debug] [2025-09-09T19:24:26.128Z] Command:       E:\NODEJS\node.exe C:\Users\91797\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-09-09T19:24:26.128Z] CLI Version:   14.15.2
+[debug] [2025-09-09T19:24:26.129Z] Platform:      win32
+[debug] [2025-09-09T19:24:26.129Z] Node Version:  v22.14.0
+[debug] [2025-09-09T19:24:26.129Z] Time:          Wed Sep 10 2025 00:54:26 GMT+0530 (India Standard Time)
+[debug] [2025-09-09T19:24:26.129Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-09T19:24:26.134Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-09T19:24:26.137Z] > authorizing via signed-in user (namankalla2707@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\Rishabh's work\pr3\TimetableApp
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-09-09T19:28:05.730Z] Checked if tokens are valid: false, expires at: 1747805751470
+[debug] [2025-09-09T19:28:05.730Z] Checked if tokens are valid: false, expires at: 1747805751470
+[debug] [2025-09-09T19:28:05.731Z] > refreshing access token with scopes: []
+[debug] [2025-09-09T19:28:05.732Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-09-09T19:28:05.733Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-09-09T19:28:06.176Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-09-09T19:28:06.176Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-09-09T19:28:06.192Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2025-09-09T19:28:06.987Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-09-09T19:28:06.987Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2025-09-09T19:28:50.049Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (C:\Users\91797\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\@inquirer\core\dist\commonjs\lib\create-prompt.js:101:37)
+    at Interface.emit (node:events:518:28)
+    at Interface.emit (node:domain:489:12)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1124:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:263:20)
+    at ReadStream.emit (node:events:530:35)
+    at ReadStream.emit (node:domain:489:12)
+    at emitKeys (node:internal/readline/utils:370:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-09-09T19:28:54.939Z] ----------------------------------------------------------------------
+[debug] [2025-09-09T19:28:54.942Z] Command:       E:\NODEJS\node.exe C:\Users\91797\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-09-09T19:28:54.943Z] CLI Version:   14.15.2
+[debug] [2025-09-09T19:28:54.943Z] Platform:      win32
+[debug] [2025-09-09T19:28:54.943Z] Node Version:  v22.14.0
+[debug] [2025-09-09T19:28:54.943Z] Time:          Wed Sep 10 2025 00:58:54 GMT+0530 (India Standard Time)
+[debug] [2025-09-09T19:28:54.944Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-09T19:28:54.950Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-09T19:28:54.952Z] > authorizing via signed-in user (namankalla2707@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  D:\Rishabh's work\pr3\TimetableApp
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
