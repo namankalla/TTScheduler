@@ -109,11 +109,13 @@ CRITICAL PARSING RULES:
    - "7A12:CS:TDPIT4:172(C8)" → courseCode: "CS", instructor: "TDPIT4", location: "172(C8)"
    - "7A12-1:STQA(ASD):203-A" → courseCode: "STQA", instructor: "ASD", location: "203-A"
 
-3. SPECIAL ENTRIES:
-   - "LIBRARY / SELF STUDY" → courseCode: "LIBRARY", courseName: "Library/Self Study", type: "Library"
-   - "PROJECT" → courseCode: "PROJECT", courseName: "Project Work", type: "Project"
-   - "LUNCH BREAK" → courseCode: "LUNCH", courseName: "Lunch Break", type: "Break"
-   - "RECESS" → courseCode: "RECESS", courseName: "Recess", type: "Break"
+3. SPECIAL ENTRIES (SKIP THESE):
+   - "LIBRARY / SELF STUDY" → SKIP (do not include)
+   - "PROJECT" → SKIP (do not include)
+   - "LUNCH BREAK" → SKIP (do not include)
+   - "RECESS" → SKIP (do not include)
+   - Any slot from 11:20-12:20 → SKIP (lunch break time, regardless of name)
+   - Any break periods, lunch periods, or recess periods → SKIP
 
 4. COURSE NAME MAPPING:
    - STQA → "Software Testing and Quality Assurance"

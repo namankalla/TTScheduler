@@ -26,6 +26,15 @@ export const NotificationProvider = ({ children }) => {
 
   const initializeNotifications = async () => {
     try {
+      // Check if we're running in Expo Go (which doesn't support push notifications in SDK 53+)
+      const isExpoGo = __DEV__ && !global.EXPO_PROJECT_ID;
+      
+      if (isExpoGo) {
+        console.log('Running in Expo Go - push notifications not available in SDK 53+');
+        console.log('To test notifications, use a development build instead of Expo Go');
+        return;
+      }
+
       // Request permissions and get Expo push token
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
@@ -33,7 +42,23 @@ export const NotificationProvider = ({ children }) => {
         return;
       }
 
-      const tokenResponse = await Notifications.getExpoPushTokenAsync();
+      // Get push token with project ID
+      let tokenResponse;
+      try {
+        // Try to get token with project ID from environment or config
+        const projectId = process.env.EXPO_PROJECT_ID || global.EXPO_PROJECT_ID;
+        if (projectId) {
+          tokenResponse = await Notifications.getExpoPushTokenAsync({ projectId });
+        } else {
+          tokenResponse = await Notifications.getExpoPushTokenAsync();
+        }
+      } catch (error) {
+        console.warn('Failed to get push token:', error.message);
+        // If push token fails, we can still use local notifications
+        console.log('Continuing with local notifications only');
+        return;
+      }
+
       const token = tokenResponse.data;
       setFcmToken(token);
       
@@ -64,6 +89,7 @@ export const NotificationProvider = ({ children }) => {
       };
     } catch (error) {
       console.error('Failed to initialize notifications:', error);
+      // Don't throw the error, just log it and continue without notifications
     }
   };
 

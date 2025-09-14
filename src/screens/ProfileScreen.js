@@ -56,9 +56,20 @@ const ProfileScreen = ({ navigation }) => {
           text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
-            const result = await signOut();
-            if (!result.success) {
-              Alert.alert('Error', result.error);
+            try {
+              const result = await signOut();
+              if (!result.success) {
+                Alert.alert('Error', result.error);
+              } else {
+                console.log('Sign out successful - navigating to welcome page');
+                // Add a small delay to ensure the auth state change is processed
+                setTimeout(() => {
+                  console.log('Auth state should have changed, navigation will happen automatically');
+                }, 100);
+              }
+            } catch (error) {
+              console.error('Sign out error:', error);
+              Alert.alert('Error', 'Failed to sign out');
             }
           },
         },

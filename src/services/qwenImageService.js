@@ -128,9 +128,11 @@ STRICT RULES:
    - "BDA(SSV) 203-A" -> subject BDA, instructor SSV, location 203-A
    - "INS(MAI) 172(C8)" -> subject INS, instructor MAI, location 172(C8)
    - "7A12:CS:TDPIT4:172(C8)" -> subject CS, instructor TDPIT4, location 172(C8)
-5) Special cells:
-   - "LIBRARY / SELF STUDY" -> subject LIBRARY, type Library
-   - "PROJECT" -> subject PROJECT, type Project
+5) Special cells (SKIP THESE):
+   - "LIBRARY / SELF STUDY" -> SKIP (do not include)
+   - "PROJECT" -> SKIP (do not include)
+   - Any slot from 11:20-12:20 -> SKIP (lunch break time, regardless of name)
+   - Any break periods, lunch periods, or recess periods -> SKIP
 6) If a subject appears multiple times across days/slots, create multiple entries.
 7) If unsure on a field, omit it; do not write placeholders.
 `;

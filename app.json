@@ -8,6 +8,11 @@
     "scheme": "timetableapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -43,6 +48,14 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#6366F1",
+          "defaultChannel": "default"
         }
       ]
     ],

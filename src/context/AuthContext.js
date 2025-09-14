@@ -47,7 +47,10 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.warn('Failed to update user profile:', error);
         }
+      } else {
+        console.log('AuthContext: User signed out, clearing user state');
       }
+      
       setUser(user);
       setLoading(false);
       console.log('AuthContext: User state set, loading set to false');

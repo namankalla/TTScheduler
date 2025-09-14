@@ -89,6 +89,11 @@ const UploadScreen = ({ navigation }) => {
   };
 
   const uploadTimetable = async () => {
+    if (!user?.uid) {
+      Alert.alert('Error', 'Please sign in to upload timetables');
+      return;
+    }
+    
     if (!selectedImage) {
       Alert.alert('Error', 'Please select an image first');
       return;
@@ -98,11 +103,18 @@ const UploadScreen = ({ navigation }) => {
     setUploadProgress('Requesting permissions...');
 
     try {
-      // Request notification permissions
-      const hasPermission = await requestNotificationPermissions();
-      if (!hasPermission) {
-        Alert.alert('Permission Required', 'Please enable notifications to receive class reminders');
-        return;
+      // Check if we're running in Expo Go (which doesn't support notifications in SDK 53+)
+      const isExpoGo = __DEV__ && !global.EXPO_PROJECT_ID;
+      
+      if (!isExpoGo) {
+        // Request notification permissions only if not in Expo Go
+        const hasPermission = await requestNotificationPermissions();
+        if (!hasPermission) {
+          Alert.alert('Permission Required', 'Please enable notifications to receive class reminders');
+          return;
+        }
+      } else {
+        console.log('Running in Expo Go - skipping notification permission request');
       }
 
       setUploadProgress('Parsing timetable with Gemini...');
@@ -126,8 +138,13 @@ const UploadScreen = ({ navigation }) => {
 
       setUploadProgress('Scheduling notifications...');
       
-      // Step 4: Schedule notifications
-      const scheduledNotifications = await scheduleClassReminders(parsedData);
+      // Schedule notifications only if not in Expo Go
+      if (!isExpoGo) {
+        const scheduledNotifications = await scheduleClassReminders(parsedData);
+        console.log(`Scheduled ${scheduledNotifications.length} notifications`);
+      } else {
+        console.log('Running in Expo Go - skipping notification scheduling');
+      }
 
       setUploadProgress('Success!');
       
@@ -135,7 +152,7 @@ const UploadScreen = ({ navigation }) => {
         'Success!',
         `Timetable processed successfully!\n\n` +
         `• ${parsedData.courses.length} courses found\n` +
-        `• ${scheduledNotifications.length} reminders scheduled\n` +
+        `• ${isExpoGo ? 'Notifications skipped (Expo Go)' : 'Reminders scheduled'}\n` +
         `• Confidence: ${Math.round(getConfidenceScore(parsedData) * 100)}%`,
         [
           {

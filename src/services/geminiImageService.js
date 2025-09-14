@@ -170,7 +170,9 @@ Rules:
 4. For "LIBRARY / SELF STUDY", set subject = "Library / Self Study", type = "Self Study", instructor = null, location = null.
 5. For "PROJECT", subject = "Project", type = "Project", instructor = null, location = null.
 6. For labs (e.g., CS-L, TDPT), set \`"type": "Lab"\`.
-7. Always ensure valid JSON. Do not include any explanation or text outside the JSON.`;
+7. IMPORTANT: Skip lunch break slots from 11:20-12:20. Do not include any entries with time "11:20-12:20" regardless of what they are named (Library, Free Period, etc.).
+8. Skip any break periods, lunch periods, or recess periods regardless of their names.
+9. Always ensure valid JSON. Do not include any explanation or text outside the JSON.`;
 
 const guessMimeType = (uri) => {
   if (!uri) return 'image/jpeg';

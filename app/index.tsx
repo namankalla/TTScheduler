@@ -27,9 +27,11 @@ export default function Index() {
 
   // Fallback redirects (shouldn't be needed with useEffect above)
   if (user) {
+    console.log('Index: Fallback redirect to home');
     return <Redirect href="/(tabs)/home" />;
   }
 
+  console.log('Index: Fallback redirect to welcome');
   return <Redirect href="/(auth)/welcome" />;
 }
 

@@ -2,24 +2,22 @@ import { MaterialIcons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
+    Dimensions,
     RefreshControl,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
-    View,
-    Dimensions
+    View
 } from 'react-native';
+import { ThemedText } from '../../components/ThemedText';
+import { AnimatedView } from '../../components/ui/AnimatedView';
+import { PremiumButton } from '../../components/ui/PremiumButton';
+import { PremiumCard } from '../../components/ui/PremiumCard';
+import { Colors } from '../../constants/Colors';
+import { useColorScheme } from '../../hooks/useColorScheme';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import { getTimetable } from '../services/firestoreTimetableService';
-import { shadows } from '../utils/shadowUtils';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { PremiumButton } from '../../components/ui/PremiumButton';
-import { AnimatedView } from '../../components/ui/AnimatedView';
-import { ThemedText } from '../../components/ThemedText';
-import { Colors } from '../../constants/Colors';
-import { useColorScheme } from '../../hooks/useColorScheme';
 
 const { width } = Dimensions.get('window');
 
@@ -33,11 +31,22 @@ const HomeScreen = ({ navigation }) => {
   const colors = Colors[colorScheme ?? 'light'];
 
   useEffect(() => {
-    loadTimetable();
-    loadTodayClasses();
-  }, []);
+    if (user?.uid) {
+      loadTimetable();
+      loadTodayClasses();
+    } else {
+      // Clear data when user is null (e.g., after sign out)
+      setTimetable(null);
+      setTodayClasses([]);
+    }
+  }, [user]);
 
   const loadTimetable = async () => {
+    if (!user?.uid) {
+      console.log('No user available, skipping timetable load');
+      return;
+    }
+    
     setLoading(true);
     try {
       const timetable = await getTimetable(user.uid);
@@ -61,6 +70,30 @@ const HomeScreen = ({ navigation }) => {
       if (course.schedule) {
         course.schedule.forEach(session => {
           if (session.day === today) {
+            // Filter out break slots
+            const courseCode = course.courseCode?.toLowerCase() || '';
+            const courseName = course.courseName?.toLowerCase() || '';
+            const sessionType = session.type?.toLowerCase() || '';
+            
+            // Skip lunch break, recess, and other break types
+            if (courseCode.includes('lunch') || 
+                courseCode.includes('recess') || 
+                courseCode.includes('break') ||
+                courseName.includes('lunch') || 
+                courseName.includes('recess') || 
+                courseName.includes('break') ||
+                sessionType.includes('lunch') || 
+                sessionType.includes('recess') || 
+                sessionType.includes('break')) {
+              return; // Skip this session
+            }
+
+            // Skip lunch break time slot (11:20-12:20) regardless of name
+            if (session.startTime === '11:20' && session.endTime === '12:20') {
+              console.log(`Skipping lunch break slot: ${course.courseCode} (${session.startTime}-${session.endTime})`);
+              return; // Skip this session
+            }
+
             classes.push({
               ...session,
               courseCode: course.courseCode,

@@ -17,6 +17,14 @@ Notifications.setNotificationHandler({
 
 export const requestNotificationPermissions = async () => {
   try {
+    // Check if we're running in Expo Go (which doesn't support push notifications in SDK 53+)
+    const isExpoGo = __DEV__ && !global.EXPO_PROJECT_ID;
+    
+    if (isExpoGo) {
+      console.log('Running in Expo Go - notification permissions not available in SDK 53+');
+      return false;
+    }
+
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
@@ -48,6 +56,15 @@ export const requestNotificationPermissions = async () => {
 
 export const scheduleClassReminders = async (timetableData) => {
   try {
+    // Check if we're running in Expo Go (which doesn't support push notifications in SDK 53+)
+    const isExpoGo = __DEV__ && !global.EXPO_PROJECT_ID;
+    
+    if (isExpoGo) {
+      console.log('Running in Expo Go - notifications not available in SDK 53+');
+      console.log('To test notifications, use a development build instead of Expo Go');
+      return [];
+    }
+
     console.log('Scheduling class reminders...');
 
     // Cancel all existing notifications first
@@ -66,9 +83,22 @@ export const scheduleClassReminders = async (timetableData) => {
           continue;
         }
 
-        // Skip scheduling reminders for Library/Self Study sessions
-        if (course.courseCode === 'LIBRARY / SELF STUDY' || course.courseName === 'Library / Self Study') {
-          console.log(`LOG  Skipping reminders for Library/Self Study session`);
+        // Skip scheduling reminders for Library/Self Study sessions and break slots
+        const courseCode = course.courseCode?.toLowerCase() || '';
+        const courseName = course.courseName?.toLowerCase() || '';
+        const sessionType = session.type?.toLowerCase() || '';
+        
+        if (course.courseCode === 'LIBRARY / SELF STUDY' || course.courseName === 'Library / Self Study' ||
+            courseCode.includes('lunch') || courseCode.includes('recess') || courseCode.includes('break') ||
+            courseName.includes('lunch') || courseName.includes('recess') || courseName.includes('break') ||
+            sessionType.includes('lunch') || sessionType.includes('recess') || sessionType.includes('break')) {
+          console.log(`LOG  Skipping reminders for break/library session: ${course.courseCode}`);
+          continue;
+        }
+
+        // Skip lunch break time slot (11:20-12:20) regardless of name
+        if (session.startTime === '11:20' && session.endTime === '12:20') {
+          console.log(`LOG  Skipping lunch break slot: ${course.courseCode} (${session.startTime}-${session.endTime})`);
           continue;
         }
 
@@ -83,7 +113,8 @@ export const scheduleClassReminders = async (timetableData) => {
 
   } catch (error) {
     console.error('Failed to schedule class reminders:', error);
-    throw new Error(`Reminder scheduling failed: ${error.message}`);
+    // Don't throw the error, just return empty array to prevent app crashes
+    return [];
   }
 };
 
