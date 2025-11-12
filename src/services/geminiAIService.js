@@ -3,7 +3,7 @@
  * Parses timetable text into structured JSON
  */
 
-const GEMINI_API_KEY = 'AIzaSyCorFS2_Et71PRTRN_yqqdOb7fUgoF3N6k'; // You'll need to get this from Google AI Studio
+const GEMINI_API_KEY = 'AIzaSyBpJ6Ec4rtNovg_gY73NyH-6TAT9IYbZg8'; // Gemini API key
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 export const parseTimetableTextWithGemini = async (ocrText) => {

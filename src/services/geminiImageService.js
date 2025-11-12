@@ -4,12 +4,11 @@
  */
 
 // Prefer env; fallback to provided key for now (can be moved to .env later)
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyCorFS2_Et71PRTRN_yqqdOb7fUgoF3N6k';
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyBpJ6Ec4rtNovg_gY73NyH-6TAT9IYbZg8';
 const GEMINI_API_URL_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const GEMINI_MODELS = [
-  'gemini-1.5-flash-latest',
-  'gemini-1.5-flash',
-  'gemini-1.5-flash-8b'
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite'
 ];
 
 /**
